@@ -118,4 +118,4 @@ def test_chrome_updates_existing_primary_tab(tmp_path):
         timeout=30000,
     )
     page.bring_to_front.assert_awaited_once()
-    adapter.ensure_fullscreen.assert_awaited_once()
+    adapter.ensure_fullscreen.assert_awaited_once_with(page.url)

@@ -164,20 +164,38 @@ def test_focuses_uptime_tab():
     asyncio.run(adapter._focus_foreground_page())
 
     uptime_page.bring_to_front.assert_awaited_once()
-    adapter.ensure_fullscreen.assert_awaited_once()
+    adapter.ensure_fullscreen.assert_awaited_once_with(uptime_page.url)
 
 
 def test_fullscreen_uses_chrome_window_bounds():
     adapter = ChromePlaywrightAdapter("http://127.0.0.1:9222", "https://music.youtube.com/")
     session = Mock()
-    session.send = AsyncMock(side_effect=[{"windowId": 12}, {}])
+    session.send = AsyncMock(
+        side_effect=[
+            {
+                "targetInfos": [
+                    {
+                        "type": "page",
+                        "targetId": "foreground-page",
+                        "url": "https://example.com/status/all",
+                    }
+                ]
+            },
+            {"windowId": 12, "bounds": {"windowState": "normal"}},
+            {},
+        ]
+    )
     session.detach = AsyncMock()
     browser = Mock()
     browser.new_browser_cdp_session = AsyncMock(return_value=session)
     adapter._browser = browser
 
-    asyncio.run(adapter.ensure_fullscreen())
+    asyncio.run(adapter.ensure_fullscreen("https://example.com/status/all"))
 
+    session.send.assert_any_await(
+        "Browser.getWindowForTarget",
+        {"targetId": "foreground-page"},
+    )
     session.send.assert_any_await("Browser.setWindowBounds", {
         "windowId": 12,
         "bounds": {"windowState": "fullscreen"},
@@ -192,7 +210,7 @@ def test_fullscreen_error_includes_chrome_devtools_reason():
     session.detach = AsyncMock()
 
     with pytest.raises(RuntimeError, match="Browser window unavailable"):
-        asyncio.run(adapter._set_session_fullscreen(session))
+        asyncio.run(adapter._set_session_fullscreen(session, "https://example.com/"))
 
     session.detach.assert_awaited_once()
 

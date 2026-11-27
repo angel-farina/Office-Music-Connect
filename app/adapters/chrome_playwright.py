@@ -108,22 +108,36 @@ class ChromePlaywrightAdapter(BrowserAdapter):
                 page = await context.new_page()
             await page.goto(url, wait_until="domcontentloaded", timeout=30000)
             await page.bring_to_front()
-            await self.ensure_fullscreen()
+            await self.ensure_fullscreen(page.url)
         except PlaywrightError as exc:
             raise RuntimeError("No se pudo abrir la pestaña principal configurada") from exc
         return True
 
-    async def ensure_fullscreen(self) -> None:
+    async def ensure_fullscreen(self, target_url: str) -> None:
         if not self._browser and not await self.connect():
             raise RuntimeError("No se pudo conectar a Chrome para activar pantalla completa")
         if not self._browser:
             raise RuntimeError("Chrome no esta disponible para activar pantalla completa")
         session = await self._browser.new_browser_cdp_session()
-        await self._set_session_fullscreen(session)
+        await self._set_session_fullscreen(session, target_url)
 
-    async def _set_session_fullscreen(self, session: CDPSession) -> None:
+    async def _set_session_fullscreen(self, session: CDPSession, target_url: str) -> None:
         try:
-            window = await session.send("Browser.getWindowForTarget")
+            targets = await session.send("Target.getTargets")
+            target = next(
+                (
+                    info
+                    for info in targets["targetInfos"]
+                    if info["type"] == "page" and info["url"] == target_url
+                ),
+                None,
+            )
+            if target is None:
+                raise RuntimeError(f"No se encontro la pestana de Chrome: {target_url}")
+            window = await session.send(
+                "Browser.getWindowForTarget",
+                {"targetId": target["targetId"]},
+            )
             if window.get("bounds", {}).get("windowState") != "fullscreen":
                 await session.send(
                     "Browser.setWindowBounds",
@@ -367,7 +381,7 @@ class ChromePlaywrightAdapter(BrowserAdapter):
                 try:
                     await page.bring_to_front()
                     try:
-                        await self.ensure_fullscreen()
+                        await self.ensure_fullscreen(page.url)
                     except (PlaywrightError, RuntimeError) as exc:
                         LOGGER.warning("No se pudo restaurar pantalla completa: %s", exc)
                     return
@@ -381,7 +395,7 @@ class ChromePlaywrightAdapter(BrowserAdapter):
             await page.goto(self.foreground_url, wait_until="domcontentloaded", timeout=30000)
             await page.bring_to_front()
             try:
-                await self.ensure_fullscreen()
+                await self.ensure_fullscreen(page.url)
             except (PlaywrightError, RuntimeError) as exc:
                 LOGGER.warning("No se pudo restaurar pantalla completa: %s", exc)
         except PlaywrightError as exc:
