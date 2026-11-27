@@ -205,6 +205,18 @@ class ChromePlaywrightAdapter(BrowserAdapter):
         except Exception:
             return PlayerState(connected=await self.connect(), is_playing=False, updated_at=utc_now())
 
+        if (
+            self._volume is not None
+            and snapshot["volume"] is not None
+            and snapshot["volume"] != self._volume
+        ):
+            try:
+                await self._apply_volume(page, self._volume)
+            except PlaywrightError as exc:
+                LOGGER.warning("No se pudo restaurar el volumen fijado: %s", exc)
+            else:
+                snapshot["volume"] = self._volume
+
         is_playing = snapshot["is_playing"]
         if is_playing is None:
             label = snapshot["button_label"].lower()

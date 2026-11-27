@@ -34,6 +34,33 @@ def test_player_state_reads_media_playing_and_volume():
     assert state.current_track.thumbnail_url == "https://example.com/cover.jpg"
 
 
+def test_player_state_restores_volume_selected_in_app():
+    adapter = ChromePlaywrightAdapter("http://127.0.0.1:9222", "https://music.youtube.com/")
+    adapter._volume = 65
+    adapter._apply_volume = AsyncMock()
+    page = Mock()
+    page.url = "https://music.youtube.com/watch?v=track-id"
+    page.evaluate = AsyncMock(
+        return_value={
+            "title": "Cancion",
+            "artist": "Artista",
+            "thumbnail_url": None,
+            "is_playing": True,
+            "button_label": "Pausar",
+            "position": 10.0,
+            "duration": 120.0,
+            "volume": 24,
+            "time": "",
+        }
+    )
+    adapter._ensure_page = AsyncMock(return_value=page)
+
+    state = asyncio.run(adapter.get_state())
+
+    adapter._apply_volume.assert_awaited_once_with(page, 65)
+    assert state.volume == 65
+
+
 def test_player_state_builds_thumbnail_fallback_from_video_id():
     adapter = ChromePlaywrightAdapter("http://127.0.0.1:9222", "https://music.youtube.com/")
     page = Mock()

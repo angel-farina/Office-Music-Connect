@@ -10,6 +10,8 @@ Al pulsar **Reproducir** en un resultado, el tema se reproduce inmediatamente si
 
 La **Lista para Siguiente** se usa únicamente al pulsar **Siguiente**. Al finalizar una canción, YouTube Music conserva su comportamiento de reproducción automática y la lista no se consume.
 
+El volumen seleccionado desde la interfaz se vuelve a aplicar si YouTube Music lo cambia mientras el backend está en ejecución. Tras reiniciar el backend, selecciona el nivel deseado nuevamente.
+
 ## Requisitos
 
 - Windows 11
