@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Office Music Connect</title>
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+  <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>Office Music Connect</h1>
+      <span class="device" id="deviceName">Música en la oficina</span>
+    </div>
+    <div class="topbar-actions">
+      <div class="status" id="connectionStatus"><span></span> Conectando</div>
+      <button id="settingsButton" class="settings-button" type="button"
+              aria-label="Configuración" title="Configuración">⚙</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel player-panel">
+      <div class="cover" id="cover">♪</div>
+      <div class="track-info">
+        <span class="eyebrow">Reproduciendo ahora</span>
+        <h2 id="trackTitle">Sin informacion</h2>
+        <p id="trackArtist">Esperando al reproductor</p>
+      </div>
+      <div class="controls">
+        <button id="previousButton" aria-label="Anterior">⏮</button>
+        <button id="playPauseButton" class="primary" aria-label="Play o pausa">▶</button>
+        <button id="nextButton" aria-label="Siguiente">⏭</button>
+      </div>
+      <div class="progress-control">
+        <div class="progress-times">
+          <span id="currentTime">0:00</span>
+          <span id="durationTime">--:--</span>
+        </div>
+        <div class="progress-track">
+          <div class="waveform" id="waveform" aria-hidden="true"></div>
+          <input id="progressRange" type="range" min="0" max="1000" value="0"
+                 aria-label="Progreso de la canción" aria-valuetext="0:00 de --:--" disabled>
+        </div>
+      </div>
+      <label class="volume">Volumen
+        <input id="volumeRange" type="range" min="0" max="100" value="50">
+      </label>
+    </section>
+
+    <section class="panel search-panel">
+      <form id="searchForm">
+        <input id="searchInput" type="search" maxlength="200" placeholder="Buscar canciones o artistas" required>
+        <button type="submit">Buscar</button>
+      </form>
+      <div id="searchResults" class="results"></div>
+    </section>
+
+    <section class="panel queue-panel">
+      <div class="section-heading">
+        <div>
+          <h2>Lista para Siguiente</h2>
+          <p class="queue-description">Se reproduce al pulsar Siguiente; al terminar una canción, YouTube Music continúa con su autoplay.</p>
+        </div>
+        <button id="clearQueueButton" class="ghost">Vaciar</button>
+      </div>
+      <div id="queueList" class="queue-list"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span><a href="https://github.com/angel-farina" target="_blank" rel="noopener noreferrer">@Wanacos.</a></span>
+  </footer>
+
+  <dialog id="settingsDialog" class="settings-dialog">
+    <form id="settingsForm">
+      <h2>Configuración</h2>
+      <label for="mainTabUrl">Enlace de la pestaña principal</label>
+      <input id="mainTabUrl" type="url" placeholder="https://example.com/" maxlength="2048" required>
+      <p>Este enlace se abrirá en la pestaña principal de Chrome y se conservará al reiniciar.</p>
+      <div class="settings-actions">
+        <button id="cancelSettings" type="button" class="ghost">Cancelar</button>
+        <button id="saveSettings" type="submit" class="save-settings" disabled>Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" role="status"></div>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
