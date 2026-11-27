@@ -44,9 +44,12 @@
                  aria-label="Progreso de la canción" aria-valuetext="0:00 de --:--" disabled>
         </div>
       </div>
-      <label class="volume">Volumen
-        <input id="volumeRange" type="range" min="0" max="100" value="50">
-      </label>
+      <div class="volume">
+        <button id="volumeButton" class="volume-toggle" type="button"
+                aria-expanded="false" aria-controls="volumeRange">Volumen</button>
+        <input id="volumeRange" type="range" min="0" max="100" value="50"
+               aria-label="Nivel de volumen" hidden>
+      </div>
     </section>
 
     <section class="panel search-panel">

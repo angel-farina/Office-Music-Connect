@@ -64,7 +64,7 @@ function setConnection(connected) {
   const status = $("connectionStatus");
   status.className = `status ${connected ? "connected" : "disconnected"}`;
   status.innerHTML = `<span></span> ${connected ? "Conectado" : "Desconectado"}`;
-  ["previousButton", "playPauseButton", "nextButton", "volumeRange", "progressRange"].forEach((id) => {
+  ["previousButton", "playPauseButton", "nextButton", "volumeButton", "volumeRange", "progressRange"].forEach((id) => {
     $(id).disabled = !connected;
   });
 }
@@ -240,6 +240,11 @@ $("playPauseButton").addEventListener("click", async () => {
 });
 $("nextButton").onclick = () => command("/api/player/next");
 $("previousButton").onclick = () => command("/api/player/previous");
+$("volumeButton").addEventListener("click", () => {
+  const expanded = $("volumeButton").getAttribute("aria-expanded") !== "true";
+  $("volumeButton").setAttribute("aria-expanded", String(expanded));
+  $("volumeRange").hidden = !expanded;
+});
 $("volumeRange").onchange = () => api("/api/player/volume", {
   method: "POST",
   body: JSON.stringify({ volume: Number($("volumeRange").value) }),

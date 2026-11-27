@@ -74,6 +74,7 @@ button:disabled { opacity:.45; cursor:not-allowed; }
 #progressRange:disabled { cursor:not-allowed; }
 .volume { grid-column: 3; display:flex; align-items:center; gap:8px; color:var(--muted); font-size:13px; }
 .volume input { accent-color: var(--accent); }
+.volume-toggle { min-width:0; min-height:36px; padding:0 10px; color:var(--muted); }
 .search-panel { grid-column: 1; }
 .queue-panel { grid-column: 2; }
 #searchForm { display:flex; gap:8px; }
