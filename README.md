@@ -22,6 +22,8 @@ No instalar nada en la mini PC hasta autorizar el despliegue.
 
 ## Desarrollo
 
+Desde Git Bash en Windows, ejecuta `bash start.sh`. En el primer inicio crea `.venv` e instala las dependencias si faltan. Si no existe `.env`, crea una copia de `.env.example`; configura `APP_ACCESS_TOKEN` y `APP_SECRET_KEY` antes de volver a iniciar.
+
 ```powershell
 python -m venv .venv
 .venv\Scripts\activate
@@ -43,7 +45,7 @@ Al iniciar el backend, se inicia automáticamente un Chrome dedicado con dos pes
 
 La instancia usa `./chrome-profile`, inicia en pantalla completa y mantiene la pestaña principal configurada en primer plano mientras YouTube Music reproduce en segundo plano. CDP solo escucha en `127.0.0.1:9222`. El Chrome preexistente no se cierra ni se automatiza. Si CDP ya está disponible, el servicio reutiliza esa instancia y abre únicamente las páginas faltantes.
 
-El enlace de la pestaña principal se puede cambiar desde el engranaje de **Configuración** y queda guardado en SQLite. También se puede establecer inicialmente con `MAIN_TAB_URL` en `.env` (por defecto `https://example.com/`). `UPTIME_KUMA_URL` sigue admitido como nombre de variable heredado. Otras opciones: `CHROME_AUTO_LAUNCH=true`, `CHROME_USER_DATA_DIR`, `CHROME_CDP_URL` y `CHROME_MUSIC_URL`. Para deshabilitar el inicio de Chrome, establezca `CHROME_AUTO_LAUNCH=false`. Si Chrome no está en la ruta habitual, indique su ejecutable con `CHROME_EXECUTABLE`.
+El enlace de la pestaña principal se puede cambiar desde el engranaje de **Configuración** y queda guardado en SQLite. También se puede establecer inicialmente con `MAIN_TAB_URL` en `.env` (por defecto `https://example.com/`). Otras opciones: `CHROME_AUTO_LAUNCH=true`, `CHROME_USER_DATA_DIR`, `CHROME_CDP_URL` y `CHROME_MUSIC_URL`. Para deshabilitar el inicio de Chrome, establezca `CHROME_AUTO_LAUNCH=false`. Si Chrome no está en la ruta habitual, indique su ejecutable con `CHROME_EXECUTABLE`.
 
 No ejecute manualmente otro Chrome con el perfil `chrome-profile` a la vez. Inicie el backend y autentique YouTube Music manualmente la primera vez.
 
@@ -77,7 +79,6 @@ Las pruebas deben pasar antes de iniciar cualquier despliegue. La búsqueda usa 
 ## Seguridad
 
 - CDP se conecta únicamente a `127.0.0.1:9222`.
-- El navegador dedicado no debe ser Uptime Kuma.
 - Las rutas de control exigen Bearer token.
 - El WebSocket exige `?token=...`.
 - No abra el puerto CDP en el firewall.
