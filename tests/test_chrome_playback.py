@@ -1,6 +1,9 @@
 import asyncio
 from unittest.mock import AsyncMock, Mock
 
+import pytest
+from playwright.async_api import Error as PlaywrightError
+
 from app.adapters.chrome_playwright import ChromePlaywrightAdapter
 from app.models.player import PlayerState, utc_now
 
@@ -179,6 +182,18 @@ def test_fullscreen_uses_chrome_window_bounds():
         "windowId": 12,
         "bounds": {"windowState": "fullscreen"},
     })
+    session.detach.assert_awaited_once()
+
+
+def test_fullscreen_error_includes_chrome_devtools_reason():
+    adapter = ChromePlaywrightAdapter("http://127.0.0.1:9222", "https://music.youtube.com/")
+    session = Mock()
+    session.send = AsyncMock(side_effect=PlaywrightError("Browser window unavailable"))
+    session.detach = AsyncMock()
+
+    with pytest.raises(RuntimeError, match="Browser window unavailable"):
+        asyncio.run(adapter._set_session_fullscreen(session))
+
     session.detach.assert_awaited_once()
 
 

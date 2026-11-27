@@ -133,7 +133,9 @@ class ChromePlaywrightAdapter(BrowserAdapter):
                     },
                 )
         except PlaywrightError as exc:
-            raise RuntimeError("No se pudo iniciar Chrome en pantalla completa") from exc
+            raise RuntimeError(
+                f"No se pudo iniciar Chrome en pantalla completa: {exc}"
+            ) from exc
         finally:
             await session.detach()
 
