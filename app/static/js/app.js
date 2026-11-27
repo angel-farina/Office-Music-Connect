@@ -25,10 +25,17 @@ $("deviceName").textContent =
   musicTaglines[Math.floor(Math.random() * musicTaglines.length)];
 
 function promptToken() {
-  let value = localStorage.getItem("cmg_access_token");
+  let value = localStorage.getItem("office_access_token");
+  if (!value) {
+    value = localStorage.getItem("cmg_access_token");
+    if (value) {
+      localStorage.setItem("office_access_token", value);
+      localStorage.removeItem("cmg_access_token");
+    }
+  }
   if (!value) {
     value = window.prompt("Ingrese el token de acceso:");
-    if (value) localStorage.setItem("cmg_access_token", value);
+    if (value) localStorage.setItem("office_access_token", value);
   }
   return value || "";
 }
